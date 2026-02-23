@@ -120,7 +120,7 @@ OAUTH2_PROVIDER = {
 }
 
 CORS_ALLOWED_ORIGINS = os.getenv(
-    "CORS_ORIGINS", "http://localhost:5173,http://localhost:3000"
+    "CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://139.59.78.201:3001/"
 ).split(",")
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
