@@ -36,7 +36,7 @@ jobs:
           # Use sshpass to pass the password and SSH into the server
           sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             # Navigate to the project directory
-            cd /var/www/role_auth_backend/test-deployment
+            cd /var/www/role_update_backendd/updated_backend
 
             # Pull the latest code from the repo
             git pull origin main
