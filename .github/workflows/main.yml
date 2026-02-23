@@ -1,1 +1,63 @@
+name: Django CI/CD Pipeline
 
+on:
+  push:
+    branches:
+      - main # Trigger the pipeline when changes are pushed to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Python environment
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Set up SSH for server access
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      # Deploy to Server using SSH with Password
+      - name: Deploy to Server using SSH with Password
+        run: |
+          # Use sshpass to pass the password and SSH into the server
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            # Navigate to the project directory
+            cd /var/www/role_auth_backend/test-deployment
+
+            # Pull the latest code from the repo
+            git pull origin main
+
+            # Activate the virtual environment
+            source venv/bin/activate
+
+            # Install the dependencies
+            pip install -r requirements.txt
+
+            # Apply migrations
+            python manage.py migrate
+            python manage.py makemigrations
+
+            # Collect static files (optional)
+            # python manage.py collectstatic --noinput
+
+            # Reload systemd to recognize the updated service
+            echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl daemon-reload
+
+            # Restart Gunicorn and Nginx without requiring interactive password
+            echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl restart gunicorn
+            echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl restart nginx
+          EOF
