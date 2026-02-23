@@ -85,7 +85,7 @@ def login_view(request):
             {"error": "Email and password required."}, status=400
         )
 
-    user = authenticate(request, username=email, password=password)
+    user = authenticate(request, email=email, password=password)
     if not user:
         return Response({"error": "Invalid credentials."}, status=401)
     if not user.is_active:
