@@ -58,6 +58,7 @@ jobs:
             echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl daemon-reload
 
             # Restart Gunicorn and Nginx without requiring interactive password
-            echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl restart gunicorn
-            echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl restart nginx
+            sudo systemctl daemon-reload
+            sudo systemctl restart nda_shield
+            sudo systemctl restart nginx
           EOF
